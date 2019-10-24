@@ -4,6 +4,9 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Navigation;
 using TimerWorkPCFrame.ViewModel;
 using YamlDotNet.Serialization;
 
@@ -13,13 +16,14 @@ namespace TimerWorkPCFrame
     {
         public ObservableCollection<WorkSessionViewModel> ListSessions { get; set; }
             = new ObservableCollection<WorkSessionViewModel>();
-        
+
         private Timer _timerUpdate;
         private const string Path = "WorkSession.yaml";
 
         public WorkSessionViewModel SessionViewModel { get; set; } = new WorkSessionViewModel();
         public bool IsWindowMinimize { get; set; }
         public bool ShowTaskBar { get; set; } = true;
+        public bool AccessPath { get; set; }
 
         public RelayCommand IsMinimizeCommand { get; set; }
         public RelayCommand ClearTimeListCommand { get; set; }
@@ -27,7 +31,9 @@ namespace TimerWorkPCFrame
         public MainWindowViewModel()
         {
             IsMinimizeCommand = new RelayCommand(Minimized);
-            ClearTimeListCommand = new RelayCommand(ClearTimeList);
+
+            ClearTimeListCommand = new RelayCommand(async () => { await Task.Run(ClearTimeList); });
+
 
             var deserialization = Deserialization();
             if (deserialization != null)
@@ -44,7 +50,7 @@ namespace TimerWorkPCFrame
 
             ListSessions.Add(SessionViewModel);
 
-            _timerUpdate = new Timer(TimeUpdateTick, 0, 0, 1000);
+            _timerUpdate = new Timer(TimeUpdateTick, 0, 0, 5000);
         }
 
 
@@ -54,16 +60,33 @@ namespace TimerWorkPCFrame
             ShowTaskBar = !ShowTaskBar;
         }
 
-        private void ClearTimeList(object obj)
+        private async Task ClearTimeList()
         {
-            ListSessions.Clear();
+            await Task.Run(() =>
+            {
+                AccessPath = false;
+                _timerUpdate.Change(0, -1);
+
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    ListSessions.Clear();
+                    File.Delete(Path);
+                });
+
+                _timerUpdate.Change(0, 5000);
+                AccessPath = true;
+            });
         }
 
 
         private void TimeUpdateTick(object obj)
         {
             SessionViewModel.EndDateTime = DateTime.Now;
-           //Serialization();
+
+            if (AccessPath)
+            {
+                Serialization();  
+            }
         }
 
         #region Serilialization Part

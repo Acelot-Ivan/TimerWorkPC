@@ -20,6 +20,12 @@ namespace TimerWorkPCFrame.ViewModel
             _canExecute = canExecute;
         }
 
+        public RelayCommand(Action execute, Func<object, bool> canExecute = null)
+        {
+            _execute = o => execute();
+            _canExecute = canExecute;
+        }
+
         public bool CanExecute(object parameter)
         {
             return _canExecute == null || _canExecute(parameter);
