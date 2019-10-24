@@ -13,5 +13,6 @@ namespace TimerWorkPCFrame
         public DateTime StartWorkDateTime { get; set; } = DateTime.Now;
         public DateTime EndDateTime { get; set; } = DateTime.Now;
         private TimeSpan WorkTimeSpan => EndDateTime - StartWorkDateTime;
+
     }
 }

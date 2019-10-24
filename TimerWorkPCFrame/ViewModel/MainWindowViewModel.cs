@@ -13,18 +13,7 @@ namespace TimerWorkPCFrame
     {
         public ObservableCollection<WorkSessionViewModel> ListSessions { get; set; }
             = new ObservableCollection<WorkSessionViewModel>();
-        public Dictionary<DayOfWeek, string> DayOfWeekList = new Dictionary<DayOfWeek, string>
-        {
-            {DayOfWeek.Monday, "Понедельник" },
-            {DayOfWeek.Tuesday, "Вторник" },
-            {DayOfWeek.Wednesday, "Среда" },
-            {DayOfWeek.Thursday, "Четверг" },
-            {DayOfWeek.Friday, "Пятница" },
-            {DayOfWeek.Saturday, "Суббота" },
-            {DayOfWeek.Sunday, "Воскресенье" },
-        };
-
-
+        
         private Timer _timerUpdate;
         private const string Path = "WorkSession.yaml";
 

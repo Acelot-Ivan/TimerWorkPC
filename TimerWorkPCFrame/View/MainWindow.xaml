@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TimerWorkPCFrame"
+        xmlns:convert="clr-namespace:TimerWorkPCFrame.Converters"
         xmlns:tb="http://www.hardcodet.net/taskbar"
         MouseLeftButtonDown="MainWindow_OnMouseLeftButtonDown"
         ShowInTaskbar="{Binding ShowTaskBar}"
@@ -35,10 +36,18 @@
     </Window.DataContext>
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVis" />
+        <convert:DayWeekToStringRu x:Key="DayWeekToStringRu" />
+        <Style x:Key="TextBlockStyle" TargetType="TextBlock">
+            <Setter Property="TextAlignment" Value="Center" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Foreground" Value="Orange" />
+            <Setter Property="Width" Value="120" />
+        </Style>
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="30" />
+            <RowDefinition Height="40" />
             <RowDefinition Height="1*" />
             <RowDefinition Height="40" />
         </Grid.RowDefinitions>
@@ -47,10 +56,12 @@
             <StackPanel Orientation="Horizontal"
                         HorizontalAlignment="Right">
                 <Button Width="100"
+                        Height="30"
                         Margin="0,0,20,0"
                         Content="Minimize"
                         Command="{Binding IsMinimizeCommand}" />
                 <Button Width="100"
+                        Height="30"
                         Margin="0,0,20,0"
                         Content="Close"
                         Click="CloseProgram" />
@@ -66,53 +77,38 @@
                             <ColumnDefinition Width="1*" />
                             <ColumnDefinition Width="1*" />
                             <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="1*" />
                         </Grid.ColumnDefinitions>
-                        <Grid Grid.Column="0"
-                              Margin="20,0">
-                            <StackPanel VerticalAlignment="Center"
-                                        HorizontalAlignment="Center">
-                                <TextBlock Text="{Binding StartWorkDateTime , StringFormat='{}{0:dd.MM.yyyy}'}"
-                                           TextAlignment="Center"
-                                           Width="120"
-                                           TextWrapping="Wrap"
-                                           FontSize="25"
-                                           Foreground="Orange" />
-                                <TextBlock Text="{Binding StartWorkDateTime , StringFormat='{}{0:HH:mm:ss}'}"
-                                           TextAlignment="Center"
-                                           Width="120"
-                                           TextWrapping="Wrap"
-                                           FontSize="25"
-                                           Foreground="Orange" />
-                            </StackPanel>
+                        <Grid Grid.Column="0">
+                            <TextBlock Text="{Binding StartWorkDateTime , Converter= {StaticResource DayWeekToStringRu}}"
+                                       Style="{StaticResource TextBlockStyle}" />
                         </Grid>
                         <Grid Grid.Column="1"
                               Margin="20,0">
                             <StackPanel VerticalAlignment="Center"
                                         HorizontalAlignment="Center">
-                                <TextBlock Text="{Binding EndDateTime , StringFormat='{}{0:dd.MM.yyyy}'}"
-                                           TextAlignment="Center"
-                                           Width="120"
-                                           TextWrapping="Wrap"
-                                           FontSize="25"
-                                           Foreground="Orange" />
-                                <TextBlock Text="{Binding EndDateTime , StringFormat='{}{0:HH:mm:ss}'}"
-                                           TextAlignment="Center"
-                                           Width="120"
-                                           TextWrapping="Wrap"
-                                           FontSize="25"
-                                           Foreground="Orange" />
+                                <TextBlock Text="{Binding StartWorkDateTime , StringFormat='{}{0:dd.MM.yyyy}'}"
+                                           Style="{StaticResource TextBlockStyle}" />
+                                <TextBlock Text="{Binding StartWorkDateTime , StringFormat='{}{0:HH:mm:ss}'}"
+                                           Style="{StaticResource TextBlockStyle}"/>
                             </StackPanel>
                         </Grid>
                         <Grid Grid.Column="2"
                               Margin="20,0">
                             <StackPanel VerticalAlignment="Center"
                                         HorizontalAlignment="Center">
+                                <TextBlock Text="{Binding EndDateTime , StringFormat='{}{0:dd.MM.yyyy}'}"
+                                           Style="{StaticResource TextBlockStyle}" />
+                                <TextBlock Text="{Binding EndDateTime , StringFormat='{}{0:HH:mm:ss}'}"
+                                           Style="{StaticResource TextBlockStyle}" />
+                            </StackPanel>
+                        </Grid>
+                        <Grid Grid.Column="3"
+                              Margin="20,0">
+                            <StackPanel VerticalAlignment="Center"
+                                        HorizontalAlignment="Center">
                                 <TextBlock Text="{Binding WorkTime}"
-                                           TextAlignment="Center"
-                                           Width="120"
-                                           TextWrapping="Wrap"
-                                           FontSize="25"
-                                           Foreground="Orange" />
+                                           Style="{StaticResource TextBlockStyle}" />
                             </StackPanel>
                         </Grid>
                     </Grid>
