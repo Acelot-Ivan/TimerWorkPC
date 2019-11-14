@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TimerWorkPC", "TimerWorkPC\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TimerWorkPCFrame", "TimerWorkPCFrame\TimerWorkPCFrame.csproj", "{5EA43BD6-9530-4690-9A08-D650ABFEC4CC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestSQL", "TestSQL\TestSQL.csproj", "{268A3588-CBEB-4B74-9AA8-781DB1C455E3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{5EA43BD6-9530-4690-9A08-D650ABFEC4CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5EA43BD6-9530-4690-9A08-D650ABFEC4CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5EA43BD6-9530-4690-9A08-D650ABFEC4CC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{268A3588-CBEB-4B74-9AA8-781DB1C455E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{268A3588-CBEB-4B74-9AA8-781DB1C455E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{268A3588-CBEB-4B74-9AA8-781DB1C455E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{268A3588-CBEB-4B74-9AA8-781DB1C455E3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

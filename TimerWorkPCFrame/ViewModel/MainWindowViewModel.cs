@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Navigation;
 using TimerWorkPCFrame.ViewModel;
 using YamlDotNet.Serialization;
 
@@ -21,9 +19,12 @@ namespace TimerWorkPCFrame
         private const string Path = "WorkSession.yaml";
 
         public WorkSessionViewModel SessionViewModel { get; set; } = new WorkSessionViewModel();
+
         public bool IsWindowMinimize { get; set; }
-        public bool ShowTaskBar { get; set; } = true;
         public bool AccessPath { get; set; }
+
+        public WindowState WindowState { get; set; } = WindowState.Normal;
+        public bool ShowTaskBar { get; set; } = true;
 
         public RelayCommand IsMinimizeCommand { get; set; }
         public RelayCommand ClearTimeListCommand { get; set; }
@@ -51,12 +52,13 @@ namespace TimerWorkPCFrame
             ListSessions.Add(SessionViewModel);
 
             _timerUpdate = new Timer(TimeUpdateTick, 0, 0, 5000);
+
         }
 
-
-        private void Minimized(object obj)
+        private void Minimized(object obj = null)
         {
             IsWindowMinimize = !IsWindowMinimize;
+            WindowState = ShowTaskBar ? WindowState.Minimized : WindowState.Normal;
             ShowTaskBar = !ShowTaskBar;
         }
 
@@ -69,6 +71,7 @@ namespace TimerWorkPCFrame
 
                 Application.Current.Dispatcher.Invoke(() =>
                 {
+                    SessionViewModel = new WorkSessionViewModel();
                     ListSessions.Clear();
                     File.Delete(Path);
                 });
@@ -81,11 +84,16 @@ namespace TimerWorkPCFrame
 
         private void TimeUpdateTick(object obj)
         {
+            if (ListSessions.Count == 0)
+            {
+                Application.Current.Dispatcher.Invoke(() => { ListSessions.Add(SessionViewModel); });
+            }
+
             SessionViewModel.EndDateTime = DateTime.Now;
 
             if (AccessPath)
             {
-                Serialization();  
+                Serialization();
             }
         }
 

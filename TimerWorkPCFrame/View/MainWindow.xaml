@@ -8,6 +8,7 @@
         xmlns:tb="http://www.hardcodet.net/taskbar"
         MouseLeftButtonDown="MainWindow_OnMouseLeftButtonDown"
         ShowInTaskbar="{Binding ShowTaskBar}"
+        WindowState="{Binding WindowState}"
         WindowStyle="None"
         mc:Ignorable="d"
         Title="Рабочий таймер"
@@ -15,36 +16,26 @@
         Width="800"
         ResizeMode="CanMinimize"
         WindowStartupLocation="CenterOwner">
-    <Window.Style>
-        <Style TargetType="Window">
-            <Style.Triggers>
-                <DataTrigger Binding="{Binding ShowTaskBar}"
-                             Value="False">
-                    <Setter Property="WindowState"
-                            Value="Minimized" />
-                </DataTrigger>
-                <DataTrigger Binding="{Binding ShowTaskBar}"
-                             Value="True">
-                    <Setter Property="WindowState"
-                            Value="Normal" />
-                </DataTrigger>
-            </Style.Triggers>
-        </Style>
-    </Window.Style>
-    <Window.DataContext>
-        <local:MainWindowViewModel />
-    </Window.DataContext>
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVis" />
         <convert:DayWeekToStringRu x:Key="DayWeekToStringRu" />
-        <Style x:Key="TextBlockStyle" TargetType="TextBlock">
-            <Setter Property="TextAlignment" Value="Center" />
-            <Setter Property="TextWrapping" Value="Wrap" />
-            <Setter Property="FontSize" Value="12" />
-            <Setter Property="Foreground" Value="Orange" />
-            <Setter Property="Width" Value="120" />
+        <Style x:Key="TextBlockStyle"
+               TargetType="TextBlock">
+            <Setter Property="TextAlignment"
+                    Value="Center" />
+            <Setter Property="TextWrapping"
+                    Value="Wrap" />
+            <Setter Property="FontSize"
+                    Value="12" />
+            <Setter Property="Foreground"
+                    Value="Orange" />
+            <Setter Property="Width"
+                    Value="120" />
         </Style>
     </Window.Resources>
+    <Window.DataContext>
+        <local:MainWindowViewModel />
+    </Window.DataContext>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="40" />
@@ -127,7 +118,6 @@
         <tb:TaskbarIcon IconSource="../SunIco.ico"
                         Grid.Row="0"
                         LeftClickCommand="{Binding IsMinimizeCommand}"
-                        Visibility="{Binding IsWindowMinimize , Converter={StaticResource BoolToVis}}"
                         PopupActivation="RightClick"
                         Grid.RowSpan="2">
             <tb:TaskbarIcon.TrayToolTip>
