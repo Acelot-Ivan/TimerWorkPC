@@ -21,7 +21,11 @@ namespace TimerWorkPCFrame
         public WorkSessionViewModel SessionViewModel { get; set; } = new WorkSessionViewModel();
 
         public bool IsWindowMinimize { get; set; }
-        public bool AccessPath { get; set; }
+
+        //Что бы отключить сериализацию,
+        //на время очистки списка и удаления файла.
+        private bool _accessPath = true;
+        private bool _activeSerialization;
 
         public WindowState WindowState { get; set; } = WindowState.Normal;
         public bool ShowTaskBar { get; set; } = true;
@@ -52,7 +56,6 @@ namespace TimerWorkPCFrame
             ListSessions.Add(SessionViewModel);
 
             _timerUpdate = new Timer(TimeUpdateTick, 0, 0, 5000);
-
         }
 
         private void Minimized(object obj = null)
@@ -66,18 +69,32 @@ namespace TimerWorkPCFrame
         {
             await Task.Run(() =>
             {
-                AccessPath = false;
+                _accessPath = false;
+
                 _timerUpdate.Change(0, -1);
 
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    SessionViewModel = new WorkSessionViewModel();
-                    ListSessions.Clear();
-                    File.Delete(Path);
-                });
+                if (Application.Current.Dispatcher != null)
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        SessionViewModel = new WorkSessionViewModel();
+                        ListSessions.Clear();
+                        while (true)
+                        {
+                            try
+                            {
+                                File.Delete(Path);
+                                break;
+                            }
+                            catch (Exception e)
+                            {
+                                Thread.Sleep(100);
+                            }  
+                        }
+                    });
 
                 _timerUpdate.Change(0, 5000);
-                AccessPath = true;
+
+                _accessPath = true;
             });
         }
 
@@ -86,12 +103,13 @@ namespace TimerWorkPCFrame
         {
             if (ListSessions.Count == 0)
             {
-                Application.Current.Dispatcher.Invoke(() => { ListSessions.Add(SessionViewModel); });
+                if (Application.Current.Dispatcher != null)
+                    Application.Current.Dispatcher.Invoke(() => { ListSessions.Add(SessionViewModel); });
             }
 
             SessionViewModel.EndDateTime = DateTime.Now;
 
-            if (AccessPath)
+            if (_accessPath)
             {
                 Serialization();
             }
@@ -101,10 +119,23 @@ namespace TimerWorkPCFrame
 
         private void Serialization()
         {
-            var serializer = new Serializer();
-            using var file = File.Open(Path, FileMode.Create);
-            using var writer = new StreamWriter(file);
-            serializer.Serialize(writer, GetWorkSessionSerializations());
+            _activeSerialization = true;
+            while (true)
+            {
+                try
+                {
+                    var serializer = new Serializer();
+                    using var file = File.Open(Path, FileMode.Create);
+                    using var writer = new StreamWriter(file);
+                    serializer.Serialize(writer, GetWorkSessionSerializations());
+                    break;
+                }
+                catch (Exception e)
+                {
+                    Thread.Sleep(100);
+                }
+            }
+            _activeSerialization = false;
         }
 
         private WorkSessionModel[] Deserialization()
