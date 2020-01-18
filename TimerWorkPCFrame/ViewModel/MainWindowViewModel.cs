@@ -33,6 +33,8 @@ namespace TimerWorkPCFrame
         public RelayCommand IsMinimizeCommand { get; set; }
         public RelayCommand ClearTimeListCommand { get; set; }
 
+        public string TotalTimeWork { get; set; }
+
         public MainWindowViewModel()
         {
             IsMinimizeCommand = new RelayCommand(Minimized);
@@ -43,17 +45,67 @@ namespace TimerWorkPCFrame
             var deserialization = Deserialization();
             if (deserialization != null)
             {
+                var desListSession = new ObservableCollection<WorkSessionViewModel>();
+
                 foreach (var session in deserialization)
                 {
-                    ListSessions.Add(new WorkSessionViewModel
+
+                    var workSessionViewModel = new WorkSessionViewModel
                     {
                         StartWorkDateTime = session.StartWorkDateTime,
                         EndDateTime = session.EndDateTime
-                    });
+                    };
+
+                    desListSession.Add(workSessionViewModel);
+                }
+
+
+                if (desListSession.Count > 0)
+                {
+                    foreach (var item in desListSession.ToList())
+                    {
+                        var index = desListSession.IndexOf(item);
+
+                        if (index == 0) continue;
+
+
+                        var oldItem = desListSession[index - 1];
+                        var newItem = desListSession[index];
+
+                        if (oldItem.StartWorkDateTime.Year == newItem.StartWorkDateTime.Year && 
+                            oldItem.StartWorkDateTime.Month == newItem.StartWorkDateTime.Month && 
+                            oldItem.StartWorkDateTime.Date == newItem.StartWorkDateTime.Date)
+                        {
+                            oldItem.EndDateTime = newItem.EndDateTime;
+                            desListSession.Remove(newItem);
+                        }
+                    }
+                }
+
+                foreach (var item in desListSession)
+                {
+                    ListSessions.Add(item);
                 }
             }
 
+            
+
             ListSessions.Add(SessionViewModel);
+
+
+            var globalTimeSpan = new TimeSpan();
+
+            foreach (var item in ListSessions)
+            {
+                globalTimeSpan += item.WorkTimeSpan;
+            }
+
+            var globalDay = (int) globalTimeSpan.TotalHours / 9;
+            var globalHour = (int) globalTimeSpan.TotalHours % 9;
+
+
+            TotalTimeWork = $"{globalDay:00}  {globalHour:00}:{globalTimeSpan.Minutes:00}:{globalTimeSpan.Seconds:00}";
+
 
             _timerUpdate = new Timer(TimeUpdateTick, 0, 0, 5000);
         }
